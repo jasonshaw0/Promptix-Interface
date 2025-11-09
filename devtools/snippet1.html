@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Corner-Orbit Button • Single File Demo</title>
+
+  <!-- Google font for nicer default text (optional) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- Exo thin font for grid view title -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo:wght@100&display=swap" rel="stylesheet">
+
+  <style>
+    /* Normalize (hosted) */
+    @import url("https://unpkg.com/normalize.css") layer(normalize);
+
+    /* ===== Layers ===== */
+    @layer normalize, base, demo;
+
+    /* =================== Base =================== */
+    @layer base {
+      :root {
+        color-scheme: dark light;
+        --bg: light-dark(#fff, #000);
+        --text: light-dark(#0b0e12, #e6edf6);
+        --muted: light-dark(#4b5563, #8b95a7);
+        --border: light-dark(#e5e7eb, #1b2430);
+        --accent: #6ea4ff;
+      }
+
+      [data-theme="light"] {
+        color-scheme: light only;
+      }
+
+      [data-theme="dark"] {
+        color-scheme: dark only;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+      }
+
+      /* subtle grid background like the reference */
+      body::before {
+        --size: 44px;
+        --line: color-mix(in hsl, currentColor, transparent 75%);
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          linear-gradient(90deg, var(--line) 1px, transparent 1px var(--size)) 50% 50%/var(--size) var(--size),
+          linear-gradient(0deg, var(--line) 1px, transparent 1px var(--size)) 50% 50%/var(--size) var(--size);
+        mask: linear-gradient(-20deg, transparent 45%, white);
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      /* small bear link */
+      .bear-link {
+        position: fixed;
+        left: 12px;
+        top: 12px;
+        width: 48px;
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        color: currentColor;
+        opacity: .85;
+        text-decoration: none;
+      }
+
+      .bear-link:hover {
+        opacity: 1
+      }
+
+      .bear-link svg {
+        width: 76%
+      }
+    }
+
+    /* =================== Demo =================== */
+    @layer demo {
+
+      /* MAIN BUTTON */
+      body>button {
+        position: relative;
+        border: 0;
+        padding: .8rem 1rem;
+        background: color-mix(in oklch, canvas, canvasText 4%);
+        color: color-mix(in oklch, canvasText, #0000 25%);
+        text-transform: uppercase;
+        font-size: .78rem;
+        font-weight: 600;
+        letter-spacing: .12em;
+        line-height: 1;
+        cursor: pointer;
+        border-radius: 12px;
+        transition: background .26s ease-out, color .26s ease-out, transform .14s ease-out;
+      }
+
+      body>button:focus-visible {
+        outline: color-mix(in oklch, canvasText, #0000) dashed 1px;
+        outline-offset: .5rem;
+      }
+
+      body>button:is(:hover, :focus-visible) {
+        color: canvasText;
+        background: color-mix(in oklch, canvas, canvasText 10%);
+      }
+
+      /* the four corner “orbiters” */
+      .corners {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        container-type: size;
+        /* so cqi / cqh work */
+        z-index: 2;
+      }
+
+      .corners>span {
+        width: 10px;
+        height: 10px;
+        display: grid;
+        place-items: center;
+        offset-path: border-box;
+        /* follow the border box perimeter */
+        transition: transform .26s .12s ease-out, rotate .26s .12s ease-out;
+      }
+
+      .corners>span svg {
+        width: 100%;
+        height: 100%
+      }
+
+      .corners>span:nth-of-type(1) {
+        offset-distance: 0;
+      }
+
+      .corners>span:nth-of-type(2) {
+        offset-distance: 100cqi;
+      }
+
+      .corners>span:nth-of-type(3) {
+        offset-rotate: 180deg;
+        offset-distance: calc(100cqi + 100cqh);
+      }
+
+      .corners>span:nth-of-type(4) {
+        offset-rotate: 180deg;
+        offset-distance: -100cqh;
+      }
+
+      body>button:is(:hover, :focus-visible) .corners span:nth-of-type(even) {
+        transform: translateY(100cqh);
+      }
+
+      body>button:is(:hover, :focus-visible) .corners span:nth-of-type(odd) {
+        transform: translateX(100cqi);
+      }
+
+      body>button:is(:hover, :focus-visible) .corners span svg {
+        rotate: 360deg;
+      }
+
+      /* tweakpane reset so its labels don’t shout */
+      .tp-dfwv * {
+        text-transform: lowercase;
+      }
+
+      /* ===== View Switcher Tabs (top-right) ===== */
+      .top-tabs {
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        display: inline-flex;
+        gap: 4px;
+        align-items: center;
+        padding: 4px;
+        background: color-mix(in oklch, canvas, canvasText 8%);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        box-shadow: 0 2px 10px color-mix(in oklch, canvasText, #0000 85%);
+        z-index: 20;
+      }
+
+      .top-tabs .tab {
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+        color: var(--text);
+        font: 600 .78rem/1 Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        padding: .4rem .7rem;
+        border-radius: 999px;
+        opacity: .8;
+        transition: background .2s ease, opacity .2s ease;
+      }
+
+      .top-tabs .tab:is(:hover, :focus-visible) {
+        opacity: 1
+      }
+
+      .top-tabs .tab.is-active {
+        background: color-mix(in oklch, canvas, canvasText 12%);
+        opacity: 1
+      }
+
+      .top-tabs .tab:focus-visible {
+        outline: 2px dashed currentColor;
+        outline-offset: 2px
+      }
+
+      /* ===== Infinite Grid View ===== */
+      #grid-view {
+        position: fixed;
+        inset: 0;
+        display: none;
+        place-items: center;
+        /* background image tile from the provided snippet */
+        --tile: 50px;
+        --grid-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAABnSURBVHja7M5RDYAwDEXRDgmvEocnlrQS2SwUFST9uEfBGWs9c97nbGtDcquqiKhOImLs/UpuzVzWEi1atGjRokWLFi1atGjRokWLFi1atGjRokWLFi1af7Ukz8xWp8z8AAAA//8DAJ4LoEAAlL1nAAAAAElFTkSuQmCC");
+        background: var(--grid-image) repeat 0 0;
+        animation: bg-scroll .92s linear infinite;
+        color: #999;
+        text-align: center;
+        z-index: 0;
+      }
+
+      body.mode-grid #grid-view {
+        display: grid
+      }
+
+      @keyframes bg-scroll {
+        to {
+          background-position: var(--tile) var(--tile);
+        }
+      }
+
+      .grid-title {
+        margin: 0;
+        font-family: 'Exo', Inter, system-ui, sans-serif;
+        font-weight: 100;
+        font-size: clamp(3rem, 10vw, 8rem);
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: #999;
+      }
+
+      /* When in grid mode, hide demo button, subtle grid overlay, and tweakpane */
+      body.mode-grid>button {
+        display: none
+      }
+
+      body.mode-grid::before {
+        content: none
+      }
+
+      body.mode-grid .tp-dfwv {
+        display: none !important
+      }
+
+      /* keep bear-link above grid */
+      .bear-link {
+        z-index: 10
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- small top-right tabs to switch views -->
+  <div class="top-tabs" role="tablist" aria-label="View switcher">
+    <button class="tab is-active" role="tab" aria-selected="true" data-target="demo">Demo</button>
+    <button class="tab" role="tab" aria-selected="false" data-target="grid">Grid</button>
+  </div>
+  <!-- the animated corner-orbit button -->
+  <button aria-label="Get access">
+    <span class="corners">
+      <span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"></path>
+          <path d="M12 5v14"></path>
+        </svg>
+      </span>
+      <span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"></path>
+          <path d="M12 5v14"></path>
+        </svg>
+      </span>
+      <span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"></path>
+          <path d="M12 5v14"></path>
+        </svg>
+      </span>
+      <span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"></path>
+          <path d="M12 5v14"></path>
+        </svg>
+      </span>
+    </span>
+    <span>Get access</span>
+  </button>
+
+  <!-- Infinite grid view (hidden by default) -->
+  <div id="grid-view" aria-hidden="true">
+    <h1 class="grid-title">INFINITY</h1>
+  </div>
+
+  <!-- Controls via Tweakpane, ignore when transfering from snippet to actual site-->
+  <script type="module">
+    import { Pane } from 'https://cdn.skypack.dev/tweakpane@4.0.4';
+
+    const config = { theme: 'system', text: 'Get access' };
+
+    const pane = new Pane({ title: 'Config', expanded: true });
+    pane.addBinding(config, 'text', { label: 'text' });
+    pane.addBinding(config, 'theme', {
+      label: 'Theme',
+      options: { System: 'system', Light: 'light', Dark: 'dark' }
+    });
+
+    const button = document.querySelector('body > button');
+
+    function update() {
+      document.documentElement.dataset.theme = config.theme;
+      button.ariaLabel = config.text;
+      // use :scope to select the label span inside the button
+      const label = button.querySelector(':scope > span:last-of-type');
+      if (label) label.textContent = config.text;
+    }
+
+    function sync(ev) {
+      // Use View Transitions if supported, only for theme changes
+      const changedTheme = ev?.target?.controller?.view?.labelElement?.innerText === 'Theme';
+      if (!document.startViewTransition || !changedTheme) return update();
+      document.startViewTransition(update);
+    }
+
+    pane.on('change', sync);
+    update();
+
+    // ===== View switcher logic =====
+    const tabs = document.querySelectorAll('.top-tabs .tab');
+    function setView(view) {
+      const isGrid = view === 'grid';
+      document.body.classList.toggle('mode-grid', isGrid);
+      // toggle aria-selected and active class
+      tabs.forEach(btn => {
+        const active = btn.dataset.target === view;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      // grid visibility via aria-hidden for a11y
+      const grid = document.getElementById('grid-view');
+      if (grid) grid.setAttribute('aria-hidden', isGrid ? 'false' : 'true');
+    }
+    tabs.forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.target)));
+  </script>
+</body>
+
+</html>

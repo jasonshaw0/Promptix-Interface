@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BEEF — Backend Execution & Evaluation Framework</title>
+
+  <!-- Google Fonts & Material Symbols -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600&family=Sora:wght@400;600&family=IBM+Plex+Mono:wght@400;500&family=Fira+Code:wght@400;500&family=Lora:wght@400;500&family=Montserrat:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./assets/css/base.css" />
+  <!-- grid.css removed -->
+  <link rel="stylesheet" href="./assets/css/theme.css" />
+
+  <!-- Libraries: Marked (Markdown), DOMPurify, KaTeX (LaTeX) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js" defer></script>
+</head>
+
+<body>
+  <div id="app" class="app">
+
+    <aside class="sidebar" data-collapsed="false" aria-label="Sidebar">
+      <div class="sidebar__inner">
+        <div class="sidebar__top">
+          <div class="sidebar__brand">
+            <span class="sidebar__logo" aria-hidden="true"></span>
+            <div class="sidebar__brand-txt">
+              <span class="sidebar__name">BEEF</span>
+              <span class="sidebar__sub">Backend Execution & Evaluation Framework</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar__utility">
+          <div class="sidebar__utility-row">
+            <button class="icon-btn icon-btn--lg js-open-settings" type="button" aria-label="Open settings"
+              title="Settings">
+              <span class="material-symbols-outlined" aria-hidden="true">settings</span>
+            </button>
+            <button class="icon-btn icon-btn--lg js-open-search" type="button" title="Search chats"
+              aria-label="Search chats">
+              <span class="material-symbols-outlined" aria-hidden="true">search</span>
+            </button>
+            <button class="icon-btn icon-btn--lg js-new-chat" type="button" aria-haspopup="true" aria-expanded="false"
+              title="New chat" aria-label="New chat">
+              <span class="material-symbols-outlined" aria-hidden="true">add</span>
+            </button>
+          </div>
+          <div class="sidebar__divider sidebar__divider--small" aria-hidden="true"></div>
+        </div>
+
+        <div class="sidebar-main">
+          <div class="sidebar-section">
+            <div class="sidebar-section__header" aria-expanded="true">
+              <span class="material-symbols-outlined" aria-hidden="true">history</span>
+              <span class="sidebar-section__title">History</span>
+              <span class="material-symbols-outlined sidebar-section__chevron" aria-hidden="true">expand_more</span>
+            </div>
+            <nav class="sidebar-section__content sidebar__history" id="history-list" aria-label="Chat history"
+              role="list"></nav>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-section__header" aria-expanded="true">
+              <span class="material-symbols-outlined" aria-hidden="true">list_alt</span>
+              <span class="sidebar-section__title">Presets</span>
+              <button class="icon-btn" id="add-preset-btn-sidebar" title="Add Preset" aria-label="Add Preset">
+                <span class="material-symbols-outlined" aria-hidden="true">add</span>
+              </button>
+              <span class="material-symbols-outlined sidebar-section__chevron" aria-hidden="true">expand_more</span>
+            </div>
+            <div class="sidebar-section__content">
+              <div class="sidebar-presets-box">
+                <div class="sidebar-presets-list presets-list" id="presets-list-sidebar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="sidebar-toggle js-toggle-sidebar" aria-label="Toggle sidebar" type="button"
+        title="Collapse/Expand sidebar">
+        <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+      </button>
+    </aside>
+
+    <main class="main" id="main">
+      <div class="split-overlay" id="split-overlay" aria-hidden="true">
+        <div class="split-overlay__zone split-overlay__zone--left" data-side="left">
+          <span>Drop left</span>
+        </div>
+        <div class="split-overlay__zone split-overlay__zone--right" data-side="right">
+          <span>Drop right</span>
+        </div>
+      </div>
+
+      <div class="panes" id="panes" data-split="single">
+        <section class="pane" data-side="left">
+          <header class="pane__header">
+            <div class="pane__title-group">
+              <span class="material-symbols-outlined" aria-hidden="true">chat</span>
+              <h2 class="pane__title" id="pane-left-title">Chat</h2>
+              <div style="margin-left: 10px; display:flex; align-items:center; gap:8px;">
+                <button class="btn btn--accent js-export-btn" data-side="left" type="button" title="Export Chat">
+                  <span class="material-symbols-outlined" aria-hidden="true">file_export</span>
+                  <span class="btn__label">Export</span>
+                </button>
+              </div>
+            </div>
+            <div class="pane__controls">
+              <button class="icon-btn pane__close js-close-pane" data-side="left" type="button" title="Close left pane"
+                aria-label="Close left pane">
+                <span class="material-symbols-outlined" aria-hidden="true">close</span>
+              </button>
+            </div>
+          </header>
+          <div class="pane-nav">
+            <button class="pane-nav__btn js-history-prev" data-side="left" type="button" title="Previous message">
+              <span class="material-symbols-outlined" aria-hidden="true">expand_less</span>
+            </button>
+            <button class="pane-nav__btn js-history-next" data-side="left" type="button" title="Next message">
+              <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+            </button>
+          </div>
+          <div class="messages scroll" id="messages-left" aria-live="polite"></div>
+          <div class="composer-row">
+            <div class="composer" data-side="left">
+              <div class="composer__surface">
+                <div class="composer__actions composer__actions--start">
+                  <button class="icon-btn js-attach" data-side="left" type="button" aria-label="Attach file"
+                    aria-haspopup="true" aria-expanded="false">
+                    <span class="material-symbols-outlined" aria-hidden="true">attach_file</span>
+                  </button>
+                </div>
+                <textarea class="composer__input" id="input-left" rows="1"
+                  placeholder="Message… (Enter to send, Shift+Enter for newline)" aria-label="Message"></textarea>
+                <div class="composer__actions composer__actions--end">
+                  <button class="btn btn--accent js-send" data-side="left" type="button" title="Send">
+                    <span class="material-symbols-rounded" aria-hidden="true">forward</span>
+                  </button>
+                </div>
+              </div>
+              <div class="composer__below">
+                <button class="model-link js-model-btn" data-side="left" type="button" aria-label="Select model"
+                  aria-haspopup="true" aria-expanded="false">
+                  <span class="model-link__label" id="model-chip-left">Model</span><span class="caret">▾</span>
+                </button>
+                <div class="count" id="count-left" style="font-size: 11px; font-weight: 200;">0 chars • ~0 tokens</div>
+              </div>
+              <input type="file" class="composer__file" id="file-input-left" hidden multiple />
+            </div>
+          </div>
+          <div class="pane__footer">
+            <div class="composer__meta">
+
+            </div>
+          </div>
+        </section>
+
+        <div class="pane-resizer" id="pane-resizer" role="separator" aria-orientation="vertical"
+          aria-label="Resize panes" tabindex="0"></div>
+
+        <section class="pane" data-side="right">
+          <header class="pane__header">
+            <div class="pane__title-group">
+              <span class="material-symbols-outlined" aria-hidden="true">chat</span>
+              <h2 class="pane__title" id="pane-right-title">Chat</h2>
+              <div style="margin-left: 10px; display:flex; align-items:center; gap:8px;">
+                <button class="btn btn--accent js-export-btn" data-side="right" type="button" title="Export Chat">
+                  <span class="material-symbols-outlined" aria-hidden="true">file_export</span>
+                  <span class="btn__label">Export</span>
+                </button>
+              </div>
+            </div>
+            <div class="pane__controls">
+              <button class="icon-btn pane__close js-close-pane" data-side="right" type="button"
+                title="Close right pane" aria-label="Close right pane">
+                <span class="material-symbols-outlined" aria-hidden="true">close</span>
+              </button>
+            </div>
+          </header>
+          <div class="pane-nav">
+            <button class="pane-nav__btn js-history-prev" data-side="right" type="button" title="Previous message">
+              <span class="material-symbols-outlined" aria-hidden="true">expand_less</span>
+            </button>
+            <button class="pane-nav__btn js-history-next" data-side="right" type="button" title="Next message">
+              <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+            </button>
+          </div>
+          <div class="messages scroll" id="messages-right" aria-live="polite"></div>
+          <div class="composer-row">
+            <div class="composer" data-side="right">
+              <div class="composer__surface">
+                <div class="composer__actions composer__actions--start">
+                  <button class="icon-btn js-attach" data-side="right" type="button" aria-label="Attach file"
+                    aria-haspopup="true" aria-expanded="false">
+                    <span class="material-symbols-outlined" aria-hidden="true">attach_file</span>
+                  </button>
+                </div>
+                <textarea class="composer__input" id="input-right" rows="1"
+                  placeholder="Message… (Enter to send, Shift+Enter for newline)" aria-label="Message"></textarea>
+                <div class="composer__actions composer__actions--end">
+                  <button class="btn btn--accent js-send" data-side="right" type="button" title="Send">
+                    <span class="material-symbols-rounded" aria-hidden="true">forward</span>
+                  </button>
+                </div>
+              </div>
+              <div class="composer__below">
+                <button class="model-link js-model-btn" data-side="right" type="button" aria-label="Select model"
+                  aria-haspopup="true" aria-expanded="false">
+                  <span class="model-link__label" id="model-chip-right">Model</span><span class="caret">▾</span>
+                </button>
+                <div class="count" id="count-right">0 chars • ~0 tokens</div>
+              </div>
+              <input type="file" class="composer__file" id="file-input-right" hidden multiple />
+            </div>
+          </div>
+          <div class="pane__footer">
+            <div class="composer__meta">
+
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div id="popover-root" class="popover-root" aria-live="polite"></div>
+
+    <div class="modal" id="settings-modal" role="dialog" aria-modal="true" aria-hidden="true"
+      aria-labelledby="settings-title">
+      <div class="modal__backdrop" data-close="settings-modal"></div>
+      <div class="modal__dialog" role="document" tabindex="-1">
+        <header class="modal__header">
+          <h2 id="settings-title">Settings</h2>
+          <button class="icon-btn js-close-modal" data-modal="settings-modal" type="button" aria-label="Close settings">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </header>
+        <div class="modal__body">
+          <div class="modal__tabs" role="tablist">
+            <button class="tab is-active" data-tab="general" role="tab" aria-selected="true">General</button>
+            <button class="tab" data-tab="styles" role="tab" aria-selected="false">Styles</button>
+            <button class="tab" data-tab="type" role="tab" aria-selected="false">Type</button>
+            <button class="tab" data-tab="gemini" role="tab" aria-selected="false">Gemini</button>
+            <button class="tab" data-tab="shortcuts" role="tab" aria-selected="false">Shortcuts</button>
+            <button class="tab" data-tab="export" role="tab" aria-selected="false">Export</button>
+            <button class="tab" data-tab="data" role="tab" aria-selected="false">Data</button>
+            <button class="tab" data-tab="about" role="tab" aria-selected="false">About</button>
+          </div>
+          <div class="modal__content">
+            <section class="tab-panel is-active" data-tab-panel="general" role="tabpanel">
+              <p class="help">Use Styles and Type tabs to customize look and typography.</p>
+            </section>
+
+            <section class="tab-panel" data-tab-panel="styles" role="tabpanel" aria-hidden="true">
+              <div class="field">
+                <label>Theme presets</label>
+                <div id="style-presets" class="style-presets"></div>
+              </div>
+              <div class="field">
+                <label for="icon-select">Icon family</label>
+                <select id="icon-select">
+                  <option value="outlined">Material Symbols Outlined</option>
+                  <option value="rounded">Material Symbols Rounded</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="accent-input">Accent color</label>
+                <div class="row">
+                  <button id="accent-swatch" class="color-swatch" type="button" title="Pick accent"></button>
+                  <input type="color" id="accent-input"
+                    style="opacity:0;position:absolute;width:1px;height:1px;pointer-events:none;" />
+                </div>
+              </div>
+            </section>
+
+            <section class="tab-panel" data-tab-panel="type" role="tabpanel" aria-hidden="true">
+              <div class="field">
+                <label for="font-body-select">Body font</label>
+                <select id="font-body-select"></select>
+              </div>
+              <div class="field">
+                <label for="font-body-size">Body size</label>
+                <div class="stepper">
+                  <button class="icon-btn js-step" data-target="#font-body-size" data-delta="-1"
+                    type="button">−</button>
+                  <input id="font-body-size" type="number" min="10" max="24" step="1" />
+                  <button class="icon-btn js-step" data-target="#font-body-size" data-delta="1" type="button">+</button>
+                </div>
+              </div>
+              <div class="field">
+                <label for="font-mono-select">Code font</label>
+                <select id="font-mono-select"></select>
+              </div>
+              <div class="field">
+                <label for="font-mono-size">Code size</label>
+                <div class="stepper">
+                  <button class="icon-btn js-step" data-target="#font-mono-size" data-delta="-1"
+                    type="button">−</button>
+                  <input id="font-mono-size" type="number" min="10" max="24" step="1" />
+                  <button class="icon-btn js-step" data-target="#font-mono-size" data-delta="1" type="button">+</button>
+                </div>
+              </div>
+              <div class="field">
+                <label for="font-math-select">Math font</label>
+                <select id="font-math-select"></select>
+              </div>
+            </section>
+
+            <section class="tab-panel" data-tab-panel="export" role="tabpanel" aria-hidden="true">
+              <div class="field">
+                <label for="export-format-select">Format</label>
+                <select id="export-format-select">
+                  <option value="html">HTML</option>
+                  <option value="pdf">PDF</option>
+                  <option value="json">JSON</option>
+                  <option value="md">Markdown</option>
+                  <option value="txt">Text</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="export-template">Template</label>
+                <textarea id="export-template" rows="12"></textarea>
+              </div>
+              <p class="help">Placeholders: {{title}}, {{timestamp}}, {{messages_html}}, {{messages_md}},
+                {{messages_txt}}
+              </p>
+            </section>
+
+            <section class="tab-panel" data-tab-panel="gemini" role="tabpanel" aria-hidden="true">
+              <div class="field">
+                <label for="api-key-input">Gemini API key</label>
+                <input id="api-key-input" type="password" placeholder="AIza…" autocomplete="off" />
+                <p class="help">Stored in localStorage. Client-side keys are exposed — use cautiously.</p>
+              </div>
+              <div class="field">
+                <label for="default-model-select">Default model</label>
+                <select id="default-model-select">
+                  <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                  <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+                  <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite</option>
+                  <option value="custom">Custom…</option>
+                </select>
+                <input id="default-model-input" type="text" placeholder="Custom model" class="field__inline" />
+              </div>
+              <div class="field">
+                <label for="settings-temp">Temperature</label>
+                <div class="stepper">
+                  <button class="icon-btn js-step" data-target="#settings-temp" data-delta="-0.1"
+                    type="button">−</button>
+                  <input id="settings-temp" type="number" step="0.1" min="0" max="2" />
+                  <button class="icon-btn js-step" data-target="#settings-temp" data-delta="0.1"
+                    type="button">+</button>
+                </div>
+              </div>
+              <div class="field">
+                <label for="settings-maxtokens">Max tokens</label>
+                <div class="stepper">
+                  <button class="icon-btn js-step" data-target="#settings-maxtokens" data-delta="-256"
+                    type="button">−</button>
+                  <input id="settings-maxtokens" type="number" step="64" min="64" max="8192" />
+                  <button class="icon-btn js-step" data-target="#settings-maxtokens" data-delta="256"
+                    type="button">+</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="tab-panel" data-tab-panel="shortcuts" role="tabpanel" aria-hidden="true">
+              <div class="shortcuts">
+                <p>Keyboard shortcuts are fixed for now. Fudelre update will allow remapping.</p>
+                <ul>
+                  <li><kbd>Enter</kbd> — send message</li>
+                  <li><kbd>Shift</kbd> + <kbd>Enter</kbd> — newline</li>
+                  <li><kbd>↑</kbd>/<kbd>↓</kbd> — previous/next prompt</li>
+                  <li><kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>\</kbd> — toggle split</li>
+                  <li><kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>←</kbd>/<kbd>→</kbd> — focus pane</li>
+                  <li><kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>B</kbd> — toggle sidebar</li>
+                  <li><kbd>Esc</kbd> — close popover/modal</li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="tab-panel" data-tab-panel="data" role="tabpanel" aria-hidden="true">
+              <div class="field field--row">
+                <button class="btn" id="btn-backup" type="button">Backup (download JSON)</button>
+                <input type="file" id="restore-file" accept="application/json" hidden />
+                <button class="btn" id="btn-restore" type="button">Restore (upload JSON)</button>
+              </div>
+              <div class="field field--row">
+                <button class="btn btn--accent" id="btn-reset-chats" type="button"
+                  title="Delete all chats and seed Test">Delete all chats → seed Test</button>
+              </div>
+            </section>
+
+            <section class="tab-panel" data-tab-panel="about" role="tabpanel" aria-hidden="true">
+              <p>BEEF is a minimal, dark, grid-aesthetic AI chat UI built with plain HTML/CSS/JS. Icons are Material
+                Symbols; fonts come from Google Fonts.</p>
+              <p>Gemini requests are performed directly from the browser. Use restricted keys or a proxy for production
+                environments.</p>
+            </section>
+          </div>
+        </div>
+        <footer class="modal__footer">
+          <button class="btn js-close-modal" data-modal="settings-modal" type="button">Close</button>
+          <button class="btn btn--accent" id="settings-save" type="button">Save</button>
+        </footer>
+      </div>
+    </div>
+
+    <div class="modal" id="search-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal__backdrop" data-close="search-modal"></div>
+      <div class="modal__dialog" tabindex="-1">
+        <header class="modal__header">
+          <h2>Search</h2>
+          <button class="icon-btn js-close-modal" data-modal="search-modal" type="button" aria-label="Close search">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </header>
+        <div class="modal__content">
+          <input type="text" id="search-input" placeholder="Search messages…" aria-label="Search messages" />
+          <div id="search-results" class="search-results"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="preset-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal__backdrop" data-close="preset-modal"></div>
+      <div class="modal__dialog" role="document" tabindex="-1">
+        <header class="modal__header">
+          <h2 id="preset-title">Add Preset</h2>
+          <button class="icon-btn js-close-modal" data-modal="preset-modal" type="button"
+            aria-label="Close preset modal">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </header>
+        <div class="modal__content">
+          <input type="hidden" id="preset-id" />
+          <div class="field">
+            <label for="preset-name-input">Name</label>
+            <input type="text" id="preset-name-input" />
+          </div>
+          <div class="field">
+            <label for="preset-content-input">Content</label>
+            <textarea id="preset-content-input" rows="5"></textarea>
+          </div>
+        </div>
+        <footer class="modal__footer">
+          <button class="btn js-close-modal" data-modal="preset-modal" type="button">Cancel</button>
+          <button class="btn btn--accent" id="preset-save-btn" type="button">Save</button>
+        </footer>
+      </div>
+    </div>
+
+    <div class="modal" id="confirm-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal__backdrop" data-close="confirm-modal"></div>
+      <div class="modal__dialog" role="document" tabindex="-1">
+        <header class="modal__header">
+          <h2>Confirm</h2>
+          <button class="icon-btn js-close-modal" data-modal="confirm-modal" type="button" aria-label="Close confirm">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </header>
+        <div class="modal__content">
+          <p id="confirm-message">Are you sure?</p>
+        </div>
+        <footer class="modal__footer">
+          <button class="btn js-close-modal" data-modal="confirm-modal" id="confirm-cancel"
+            type="button">Cancel</button>
+          <button class="btn btn--accent" id="confirm-ok" type="button">Confirm</button>
+        </footer>
+      </div>
+    </div>
+
+    <div class="modal" id="prompt-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal__backdrop" data-close="prompt-modal"></div>
+      <div class="modal__dialog" role="document" tabindex="-1">
+        <header class="modal__header">
+          <h2 id="prompt-title">Rename</h2>
+          <button class="icon-btn js-close-modal" data-modal="prompt-modal" type="button" aria-label="Close prompt">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </header>
+        <div class="modal__content">
+          <div class="field">
+            <label id="prompt-label" for="prompt-input">Name</label>
+            <input type="text" id="prompt-input" />
+          </div>
+        </div>
+        <footer class="modal__footer">
+          <button class="btn js-close-modal" data-modal="prompt-modal" id="prompt-cancel" type="button">Cancel</button>
+          <button class="btn btn--accent" id="prompt-ok" type="button">Save</button>
+        </footer>
+      </div>
+    </div>
+
+    <template id="tmpl-popover-model">
+      <div class="popover popover--model" role="menu">
+        <div class="popover__row" style="flex-direction: column;">
+          <button class="menu-item" data-model="gemini-2.5-flash" type="button">gemini-2.5-flash</button>
+          <button class="menu-item" data-model="gemini-2.5-pro" type="button">gemini-2.5-pro</button>
+          <button class="menu-item" data-model="gemini-2.5-flash-lite" type="button">gemini-2.5-flash-lite</button>
+          <button class="menu-item" data-model="custom" type="button">Custom…</button>
+        </div>
+        <input type="text" id="popover-model-custom" placeholder="Custom model" />
+      </div>
+    </template>
+
+    <template id="tmpl-popover-export">
+      <div class="popover popover--export" role="menu">
+        <div class="export-grid">
+          <button class="menu-item" data-export="html" type="button" title="HTML">HTML</button>
+          <button class="menu-item" data-export="pdf" type="button" title="PDF">PDF</button>
+          <button class="menu-item" data-export="json" type="button" title="JSON">JSON</button>
+          <button class="menu-item" data-export="md" type="button" title="Markdown">Markdown</button>
+          <button class="menu-item" data-export="txt" type="button" title="Text">Text</button>
+          <button class="menu-item" data-export="zip" type="button" title="ZIP">ZIP</button>
+        </div>
+        <button class="menu-item" data-export="copy" type="button">Copy text</button>
+      </div>
+    </template>
+
+    <template id="tmpl-popover-attach">
+      <div class="popover popover--attach" role="menu">
+        <button class="menu-item" data-act="upload" type="button">Upload file…</button>
+        <button class="menu-item" data-act="clear" type="button">Clear attachments</button>
+      </div>
+    </template>
+
+    <template id="tmpl-popover-history">
+      <div class="popover popover--history" role="menu">
+        <div class="popover__row" style="flex-direction: column;">
+          <button class="menu-item" data-action="pin" type="button">Pin</button>
+          <button class="menu-item" data-action="rename" type="button">Rename</button>
+          <button class="menu-item" data-action="delete" type="button">Delete</button>
+        </div>
+        <div class="popover__row popover__row--split">
+          <button class="menu-item" data-action="split-left" type="button"><span class="material-symbols-outlined"
+              aria-hidden="true">split_scene_left</span>
+          </button>
+          <button class="menu-item" data-action="split-right" type="button"><span class="material-symbols-outlined"
+              aria-hidden="true">split_scene_right</span>
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <template id="tmpl-popover-confirm">
+      <div class="popover popover--confirm" role="menu">
+        <p>Select pane:</p>
+        <div class="popover__row popover__row--split">
+          <button class="menu-item" data-side="left" type="button">Left</button>
+          <button class="menu-item" data-side="right" type="button">Right</button>
+        </div>
+      </div>
+    </template>
+
+    <template id="tmpl-popover-newchat">
+      <div class="popover popover--tiny" role="menu">
+        <button class="menu-item" data-side="left" type="button">Split left</button>
+        <button class="menu-item" data-side="right" type="button">Split right</button>
+      </div>
+    </template>
+
+    <template id="tmpl-popover-presets">
+      <div class="popover popover--presets" role="menu">
+        <div class="popover__header">
+          <button class="icon-btn" id="add-preset-btn" title="Add Preset"><span
+              class="material-symbols-outlined">add</span></button>
+        </div>
+        <div class="popover__content" id="presets-list"></div>
+      </div>
+    </template>
+
+
+  </div>
+
+  <script type="module" src="./assets/js/app.js"></script>
+</body>
+
+</html>

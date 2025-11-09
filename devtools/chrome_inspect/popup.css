@@ -1,0 +1,69 @@
+.container {
+    width: 320px;
+    padding: 12px;
+    font: 13px/1.4 -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Inter, Arial, sans-serif;
+    background: #22222252;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.label {
+    display: block;
+    margin: 8px 0 4px;
+    font-weight: 600;
+}
+
+.textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    border: 1px solid #22222252;
+    border-radius: 6px;
+    resize: vertical;
+    background: #22222252;
+}
+
+.btn {
+    padding: 6px 10px;
+    border: 1px solid #22222252;
+    background: #22222252;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn.primary {
+    background: #22222252;
+    color: #22222252;
+    border-color: #4e8bff;
+}
+
+.btn.secondary {
+    background: #22222252;
+}
+
+.btn.danger {
+    background: #22222252;
+    border-color: #ffb3b3;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.status {
+    margin-left: auto;
+    color: #22222252;
+    font-size: 12px;
+}
+
+.notice {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #4e8bff;
+    min-height: 16px;
+}

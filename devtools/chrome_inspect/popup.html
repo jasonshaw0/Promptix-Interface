@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Send to Cursor</title>
+	<link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+	<div class="container">
+		<div class="row">
+			<button id="toggleSelect" class="btn">Enable Select Mode</button>
+			<span id="selectStatus" class="status">0 selected</span>
+		</div>
+		<label class="label" for="chatText">Chat message (optional)</label>
+		<textarea id="chatText" class="textarea" rows="4"
+			placeholder="Type a message to send with your selected elements..."></textarea>
+		<div class="row">
+			<button id="refreshCount" class="btn secondary">Refresh Count</button>
+			<button id="clearSelections" class="btn danger">Clear</button>
+			<button id="sendAll" class="btn primary">Send All</button>
+		</div>
+		<div id="notice" class="notice"></div>
+	</div>
+	<script src="popup.js"></script>
+</body>
+
+</html>

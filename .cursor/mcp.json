@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "browser-picks": {
+            "command": "node",
+            "args": [
+                "C:\\Users\\jj\\Promptix Interface\\devtools\\chrome_inspect\\mcp-bridge.js"
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+    }
+}

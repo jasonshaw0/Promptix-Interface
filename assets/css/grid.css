@@ -1,0 +1,152 @@
+/* grid.css – layered grid backgrounds */
+
+.bg-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.grid-layer {
+  position: absolute;
+  inset: -40vh;
+  opacity: 0;
+  transition: opacity 600ms ease;
+  mix-blend-mode: screen;
+}
+
+.grid-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.4;
+}
+
+.grid-layer--dots::after {
+  background-image: radial-gradient(circle at 1px 1px, rgba(120, 170, 220, 0.16) 1.2px, transparent 1.2px);
+  background-size: 28px 28px;
+}
+
+.grid-layer--lines::after {
+  background-image:
+    linear-gradient(0deg, rgba(90, 140, 210, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(90, 140, 210, 0.12) 1px, transparent 1px);
+  background-size: 120px 120px;
+}
+
+.grid-layer--iso::after {
+  background-image:
+    linear-gradient(150deg, rgba(120, 170, 230, 0.12) 1px, transparent 1px),
+    linear-gradient(30deg, rgba(120, 170, 230, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 170, 230, 0.08) 1px, transparent 1px);
+  background-size: 140px 140px;
+  opacity: 0.35;
+}
+
+.grid-layer--tiles::after {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAABnSURBVHja7M5RDYAwDEXRDgmvEocnlrQS2SwUFST9uEfBGWs9c97nbGtDcquqiKhOImLs/UpuzVzWEi1atGjRokWLFi1atGjRokWLFi1atGjRokWLFi1af7Ukz8xWp8z8AAAA//8DAJ4LoEAAlL1nAAAAAElFTkSuQmCC");
+  background-size: 50px 50px;
+  filter: contrast(120%);
+  opacity: 0.32;
+  animation: tile-shift 28s linear infinite;
+}
+
+@keyframes tile-shift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(50px, 50px, 0);
+  }
+}
+
+.grid-curves {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 900ms ease;
+  filter: blur(0.2px);
+}
+
+.grid-curves path {
+  fill: none;
+  stroke: url(#curve-fade);
+  stroke-width: 2;
+}
+
+.grid-mask {
+  position: absolute;
+  inset: -80px;
+  background: radial-gradient(circle at 50% -10%, rgba(10, 18, 30, 0), rgba(10, 18, 30, 0.4) 60%, rgba(10, 18, 30, 0.85) 100%);
+}
+
+.app[data-grid-style="dots"] .grid-layer--dots,
+.app[data-grid-style="lines"] .grid-layer--lines,
+.app[data-grid-style="iso"] .grid-layer--iso,
+.app[data-grid-style="tiles"] .grid-layer--tiles {
+  opacity: 0.55;
+}
+
+.app[data-grid-style="curves"] .grid-curves {
+  opacity: 0.45;
+}
+
+.app[data-grid-style="curves"] .grid-layer--lines {
+  opacity: 0.18;
+}
+
+.app[data-grid-style="iso"] .grid-curves {
+  opacity: 0.18;
+}
+
+.app[data-grid-style="dots"] .grid-curves,
+.app[data-grid-style="lines"] .grid-curves,
+.app[data-grid-style="tiles"] .grid-curves {
+  opacity: 0.22;
+}
+
+.app[data-grid-animated="false"] .grid-layer--tiles::after {
+  animation-play-state: paused;
+}
+
+.app[data-grid-style="tiles"] .grid-layer--tiles {
+  opacity: 0.6;
+}
+
+.app[data-grid-style="lines"] .grid-layer--lines::after {
+  background-size: 110px 110px, 110px 110px;
+}
+
+.app[data-grid-style="dots"] .grid-layer--dots {
+  opacity: 0.42;
+}
+
+.app[data-grid-style="iso"] .grid-layer--iso {
+  opacity: 0.5;
+}
+
+.app[data-grid-style="lines"] .grid-layer--dots {
+  opacity: 0.18;
+}
+
+.app[data-grid-style="iso"] .grid-layer--dots {
+  opacity: 0.25;
+}
+
+.app[data-grid-style="tiles"] .grid-layer--dots {
+  opacity: 0.2;
+}
+
+.app[data-grid-style="curves"] .grid-layer--dots {
+  opacity: 0.16;
+}
+
+@media (max-width: 900px) {
+  .grid-layer::after {
+    opacity: 0.36;
+  }
+}
