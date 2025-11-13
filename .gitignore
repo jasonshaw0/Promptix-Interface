@@ -6,6 +6,7 @@ Thumbs.db
 .idea/
 .vscode/
 
+
 ##############################
 # Logs
 ##############################
@@ -46,6 +47,7 @@ coverage/
 .eslintcache
 .stylelintcache
 .tsbuildinfo
+.devtools/
 
 ##############################
 # Misc
