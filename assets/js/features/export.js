@@ -1,9 +1,8 @@
 // export.js – export chat to multiple formats (md, txt, html, pdf, json, zip, copy)
 
 function toFrontMatterMd(chat) {
-  const fm = `---\ntitle: ${
-    chat.title || "Untitled"
-  }\ndate: ${new Date().toISOString()}\n---\n\n`;
+  const fm = `---\ntitle: ${chat.title || "Untitled"
+    }\ndate: ${new Date().toISOString()}\n---\n\n`;
   const body = chat.messages
     .map(
       (m) => `### ${m.role} — ${new Date(m.ts).toLocaleString()}\n\n${m.text}\n`

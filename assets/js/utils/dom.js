@@ -34,7 +34,7 @@ export function focusTrap(modal) {
   const FOCUSABLE =
     'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
   const nodes = $$(FOCUSABLE, modal);
-  if (!nodes.length) return () => {};
+  if (!nodes.length) return () => { };
   function handler(e) {
     if (e.key === "Tab") {
       const first = nodes[0];

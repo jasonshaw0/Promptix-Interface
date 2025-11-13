@@ -7,7 +7,9 @@ Thumbs.db
 .vscode/
 .cursor/
 devtools/
-cursor/
+cursor
+.cursor
+devtools
 
 ##############################
 # Logs

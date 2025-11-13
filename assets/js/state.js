@@ -130,8 +130,9 @@ function resetChatsToTest() {
   const test = createChat("Test");
   const now = Date.now();
   test.messages.push(
-    { id: uid("m"), role: "assistant", ts: now, text:
-`# BEEF Test Chat
+    {
+      id: uid("m"), role: "assistant", ts: now, text:
+        `# Promptix Test Chat
 
 This chat demonstrates rendering and interactions:
 
